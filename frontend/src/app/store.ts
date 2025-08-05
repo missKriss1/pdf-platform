@@ -8,10 +8,12 @@ import {
     PERSIST,
 } from "redux-persist";
 import {foldersReducer} from "@/features/folders/foldersSlice.tsx";
+import {filesReducer} from "@/features/files/fileSlice.tsx";
 
 
 const rootReducer = combineReducers({
     folders: foldersReducer,
+    files: filesReducer,
 });
 
 export const store = configureStore({

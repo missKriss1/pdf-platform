@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FilesModule } from './files/files.module';
 import { FoldersModule } from './folders/folders.module';
+import {ServeStaticModule} from "@nestjs/serve-static";
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -14,6 +16,10 @@ import { FoldersModule } from './folders/folders.module';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: false,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
     }),
     FilesModule,
     FoldersModule,

@@ -1,4 +1,4 @@
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
 
 export function SortToggle({ onChange }: { onChange: (val: 'date' | 'folder') => void }) {
     return (

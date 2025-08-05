@@ -11,6 +11,13 @@ export class FilesService {
     private filesRepository: Repository<File>,
   ) {}
 
+  async findAll(): Promise<File[]> {
+    return this.filesRepository.find({
+      order: { uploadedAt: 'DESC' },
+      relations: ['folder'],
+    });
+  }
+
   async findByFolderId(folderId: number): Promise<File[]> {
     return this.filesRepository.find({
       where: { folder: { id: folderId } },

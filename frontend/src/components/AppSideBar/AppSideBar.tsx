@@ -1,19 +1,25 @@
 import { useState } from "react"
-import { SortToggle } from "@/components/SortToggle"
+import { SortToggle } from "@/components/SortToggle/SortToggle.tsx"
 import {
     Sidebar,
     SidebarContent,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
-} from "@/components/ui/sidebar"
-import { FolderList } from "@/components/FolderList"
+} from "@/components/ui/sidebar.tsx"
+import { FolderList } from "@/components/FolderList/FolderList.tsx"
+import FileList from "@/components/FileList/FileList.tsx";
 
-export function AppSidebar() {
+type Props = {
+    selectedFileUrl: string | null;
+    setSelectedFileUrl: (url: string | null) => void;
+};
+
+export const AppSidebar = ({ selectedFileUrl, setSelectedFileUrl }: Props) => {
     const [sortMode, setSortMode] = useState<"date" | "folder">("date")
 
     return (
-        <Sidebar className="w-64">
+        <Sidebar >
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel>Сортировка</SidebarGroupLabel>
@@ -21,8 +27,24 @@ export function AppSidebar() {
                         <SortToggle onChange={setSortMode} />
                     </SidebarGroupContent>
                 </SidebarGroup>
-                {sortMode === "folder" && <FolderList />}
+
+                <SidebarGroup>
+                    <SidebarGroupLabel>
+                        {sortMode === "folder" ? "Папки" : "Файлы по дате"}
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        {sortMode === "folder" ? (
+                            <FolderList selectedFileUrl={selectedFileUrl} setSelectedFileUrl={setSelectedFileUrl} />
+                            ) : (
+                            <FileList
+                                selectedFileUrl={selectedFileUrl}
+                                setSelectedFileUrl={setSelectedFileUrl}
+                            />
+                        )}
+                    </SidebarGroupContent>
+                </SidebarGroup>
             </SidebarContent>
         </Sidebar>
     )
 }
+

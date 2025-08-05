@@ -23,6 +23,11 @@ export class FilesController {
     private foldersService: FoldersService,
   ) {}
 
+  @Get()
+  async getAll() {
+    return this.filesService.findAll();
+  }
+
   @Get('folder/:folderId')
   async getFilesByFolder(@Param('folderId', ParseIntPipe) folderId: number) {
     const folder = await this.foldersService.findOne(folderId);

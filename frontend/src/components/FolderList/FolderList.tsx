@@ -1,25 +1,43 @@
-import {selectFolder} from "@/features/folders/foldersSlice.tsx";
-import {useAppDispatch, useAppSelector} from "@/app/hooks.ts";
-import {useEffect} from "react";
-import {fetchAllFolders} from "@/features/folders/folderThunk.tsx";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { fetchAllFiles } from "@/features/files/fileThunk";
+import { selectFile } from "@/features/files/fileSlice";
+import { useEffect } from "react";
 
-export const FolderList = () => {
+type Props = {
+    selectedFileUrl: string | null;
+    setSelectedFileUrl: (url: string | null) => void;
+};
+
+export const FolderList = ({ selectedFileUrl, setSelectedFileUrl }: Props) => {
     const dispatch = useAppDispatch();
-    const folders = useAppSelector(selectFolder);
+    const files = useAppSelector(selectFile);
 
     useEffect(() => {
-        dispatch(fetchAllFolders());
+        dispatch(fetchAllFiles());
     }, [dispatch]);
 
-    if (!folders.length) return <div>Нет папок</div>;
+    if (!files.length) return <div>Нет папок</div>;
 
     return (
-        <div className="space-y-4">
-            {folders.map((folder) => (
-                <div key={folder.id}>
-                    <h2 className="text-lg font-semibold">{folder.name}</h2>
+        <div className="space-y-4 p-2">
+            {files.map((file) => (
+                <div
+                    key={file.id}
+                    onClick={() => setSelectedFileUrl(file.path)}
+                    className={`cursor-pointer rounded-md border p-3 transition
+                        ${
+                        selectedFileUrl === file.path
+                            ? 'border-blue-500 bg-blue-100'
+                            : 'border-gray-300 hover:bg-gray-100'
+                    }
+                    `}
+                    title={`${file.name} — папка: ${file.folder.name}`}
+                >
+                    <div className="text-sm text-gray-500 font-medium mb-1">📁 {file.folder.name}</div>
+                    <div className="font-semibold text-gray-900 truncate">{file.name}</div>
                 </div>
             ))}
+
         </div>
     );
 };

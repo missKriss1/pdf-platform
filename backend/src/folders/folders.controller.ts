@@ -5,7 +5,6 @@ import {
   Body,
   Param,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
 import { FoldersService } from './folders.service';
 import { FolderDto } from './../dto/folder.dto';
@@ -14,18 +13,14 @@ import { FolderDto } from './../dto/folder.dto';
 export class FoldersController {
   constructor(private readonly foldersService: FoldersService) {}
 
-  @Get()
-  async getAll() {
-    return this.foldersService.findAll();
+  @Get(':id/files')
+  async findFiles(@Param('id') folderId: string) {
+    return this.foldersService.findFilesInFolder(+folderId);
   }
 
-  @Get(':id')
-  async getOne(@Param('id') id: string) {
-    const folder = await this.foldersService.findOne(+id);
-    if (!folder) {
-      throw new NotFoundException('Папка не найдена');
-    }
-    return folder;
+  @Get('with-files')
+  async getAllWithFiles() {
+    return this.foldersService.findAllWithFiles();
   }
 
   @Post()

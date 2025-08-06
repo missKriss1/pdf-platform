@@ -2,13 +2,11 @@ import {
   Controller,
   Post,
   Get,
-  Param,
   UploadedFile,
   UseInterceptors,
   Body,
   BadRequestException,
   NotFoundException,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -23,18 +21,9 @@ export class FilesController {
     private foldersService: FoldersService,
   ) {}
 
-  @Get()
-  async getAll() {
-    return this.filesService.findAll();
-  }
-
-  @Get('folder/:folderId')
-  async getFilesByFolder(@Param('folderId', ParseIntPipe) folderId: number) {
-    const folder = await this.foldersService.findOne(folderId);
-    if (!folder) {
-      throw new NotFoundException('Папка не найдена');
-    }
-    return this.filesService.findByFolderId(folderId);
+  @Get('grouped-by-date')
+  async getFilesGroupedByDate() {
+    return this.filesService.findAllGroupedByDate();
   }
 
   @Post('upload')
@@ -52,7 +41,7 @@ export class FilesController {
       fileFilter: (req, file, cb) => {
         if (file.mimetype !== 'application/pdf') {
           return cb(
-            new BadRequestException('Можно загружать только PDF'),
+            new BadRequestException('Можно загружать только PDF файлы'),
             false,
           );
         }
@@ -74,7 +63,7 @@ export class FilesController {
       throw new BadRequestException('Не указана папка для загрузки');
     }
 
-    const folder = await this.foldersService.findOne(body.folderId);
+    const folder = await this.foldersService.findFilesInFolder(body.folderId);
     if (!folder) {
       throw new NotFoundException('Папка для загрузки не найдена');
     }

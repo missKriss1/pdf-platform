@@ -1,11 +1,5 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  OneToMany,
-} from 'typeorm';
-import { File } from './file';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { File } from './../entities/file';
 
 @Entity('folders')
 export class Folder {
@@ -15,7 +9,7 @@ export class Folder {
   @Column()
   name: string;
 
-  @CreateDateColumn()
+  @Column({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
   @OneToMany(() => File, (file) => file.folder)

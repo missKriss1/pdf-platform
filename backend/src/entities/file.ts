@@ -3,9 +3,9 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  CreateDateColumn,
+  JoinColumn,
 } from 'typeorm';
-import { Folder } from './folder';
+import { Folder } from './../entities/folder';
 
 @Entity('files')
 export class File {
@@ -18,9 +18,10 @@ export class File {
   @Column()
   path: string;
 
-  @CreateDateColumn()
+  @Column({ name: 'uploaded_at', type: 'timestamp' })
   uploadedAt: Date;
 
-  @ManyToOne(() => Folder, (folder) => folder.files, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Folder, (folder) => folder.files)
+  @JoinColumn({ name: 'folder_id' })
   folder: Folder;
 }

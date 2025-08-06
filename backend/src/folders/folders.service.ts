@@ -1,25 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Folder } from './../entities/folder';
+import { Folder } from '../entities/folder';
+import { File } from '../entities/file';
 import { Repository } from 'typeorm';
-import { FolderDto } from './../dto/folder.dto';
+import { FolderDto } from '../dto/folder.dto';
 
 @Injectable()
 export class FoldersService {
   constructor(
     @InjectRepository(Folder)
     private foldersRepository: Repository<Folder>,
+    @InjectRepository(File)
+    private filesRepository: Repository<File>,
   ) {}
 
-  async findAll(): Promise<Folder[]> {
-    return this.foldersRepository.find({
-      order: { createdAt: 'DESC' },
+  async findFilesInFolder(folderId: number) {
+    const folderExists = await this.foldersRepository.findOne({
+      where: { id: folderId },
     });
+
+    if (!folderExists) {
+      throw new NotFoundException(`Папка с ID ${folderId} не найдена`);
+    }
+    return this.filesRepository
+      .createQueryBuilder('file')
+      .where('file.folder_id = :folderId', { folderId })
+      .orderBy('file.uploaded_at', 'DESC')
+      .getMany();
   }
 
-  async findOne(id: number): Promise<Folder | null> {
-    const folder = await this.foldersRepository.findOne({ where: { id } });
-    return folder ?? null;
+  async findAllWithFiles(): Promise<Folder[]> {
+    return this.foldersRepository.find({
+      relations: ['files'], // загрузить вложенные файлы для каждой папки
+      order: { createdAt: 'DESC', files: { uploadedAt: 'DESC' } }, // если нужна сортировка
+    });
   }
 
   async create(createFolderDto: FolderDto): Promise<Folder> {

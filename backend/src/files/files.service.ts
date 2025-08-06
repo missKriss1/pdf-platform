@@ -11,19 +11,22 @@ export class FilesService {
     private filesRepository: Repository<File>,
   ) {}
 
-  async findAll(): Promise<File[]> {
-    return this.filesRepository.find({
+  async findAllGroupedByDate(): Promise<Record<string, File[]>> {
+    const files = await this.filesRepository.find({
       order: { uploadedAt: 'DESC' },
       relations: ['folder'],
     });
-  }
-
-  async findByFolderId(folderId: number): Promise<File[]> {
-    return this.filesRepository.find({
-      where: { folder: { id: folderId } },
-      order: { uploadedAt: 'DESC' },
-      relations: ['folder'],
-    });
+    return files.reduce(
+      (acc, file) => {
+        const dateKey = file.uploadedAt.toISOString().slice(0, 10);
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
+        }
+        acc[dateKey].push(file);
+        return acc;
+      },
+      {} as Record<string, File[]>,
+    );
   }
 
   async create(params: FileParams): Promise<File> {
@@ -31,6 +34,7 @@ export class FilesService {
       name: params.name,
       path: params.path,
       folder: { id: params.folderId },
+      uploadedAt: new Date(),
     });
     return this.filesRepository.save(file);
   }

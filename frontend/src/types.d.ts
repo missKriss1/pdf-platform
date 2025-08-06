@@ -15,3 +15,8 @@ export interface IFile {
 export interface IFolderMutation {
   name: string;
 }
+export interface IFileMutation{
+  file: File;
+  folderId: string;
+  name?: string;
+}

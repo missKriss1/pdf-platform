@@ -14,7 +14,7 @@ export const PreviewPDF = ({ fileUrl }: Props) => {
   const currentFile = files.find((file) => file.path === fileUrl);
 
   return (
-    <div className="w-[1100px] h-[850px] border rounded shadow overflow-hidden flex flex-col">
+    <div className="w-[1100px] h-[800px] border rounded shadow overflow-hidden flex flex-col">
       <div className="p-2 font-semibold text-gray-800">
         {currentFile ? currentFile.name : "Неизвестный файл"}
       </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { IFolderMutation } from "@/types";
+import {Button} from "@/components/ui/button.tsx";
 
 type ModalWindowAddFolderProps = {
   isOpen: boolean;
@@ -57,7 +58,7 @@ const ModalWindowAddFolder = ({
             onChange={(e) => setFolderName(e.target.value)}
           />
           <div className="flex justify-end space-x-3">
-            <button
+            <Button
               type="button"
               className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
               onClick={() => {
@@ -67,13 +68,13 @@ const ModalWindowAddFolder = ({
               }}
             >
               Отмена
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+              className="px-4 py-2 rounded bg-gray-600 text-white"
             >
-              Сохранить
-            </button>
+              Добавить
+            </Button>
           </div>
         </form>
       </div>

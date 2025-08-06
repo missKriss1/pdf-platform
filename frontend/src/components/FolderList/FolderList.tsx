@@ -1,43 +1,85 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { fetchAllFiles } from "@/features/files/fileThunk";
-import { selectFile } from "@/features/files/fileSlice";
+import { fetchAllFoldersWithFiles } from "@/features/folders/folderThunk";
+import {
+  selectFolder,
+  selectFolderFiles,
+} from "@/features/folders/foldersSlice";
+import { fetchFilesInFolder } from "@/features/folders/folderThunk";
 import { useEffect } from "react";
 
 type Props = {
-    selectedFileUrl: string | null;
-    setSelectedFileUrl: (url: string | null) => void;
+  selectedFolderId: string | null;
+  setSelectedFolderId: (id: string | null) => void;
+  setSelectedFileUrl: (url: string | null) => void;
 };
 
-export const FolderList = ({ selectedFileUrl, setSelectedFileUrl }: Props) => {
-    const dispatch = useAppDispatch();
-    const files = useAppSelector(selectFile);
+export const FolderList = ({
+  selectedFolderId,
+  setSelectedFolderId,
+  setSelectedFileUrl,
+}: Props) => {
+  const dispatch = useAppDispatch();
+  const folders = useAppSelector(selectFolder);
+  const filesInFolder = useAppSelector(selectFolderFiles);
 
-    useEffect(() => {
-        dispatch(fetchAllFiles());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchAllFoldersWithFiles());
+  }, [dispatch]);
 
-    if (!files.length) return <div>Нет папок</div>;
+  useEffect(() => {
+    if (selectedFolderId) {
+      dispatch(fetchFilesInFolder(selectedFolderId));
+    }
+  }, [dispatch, selectedFolderId]);
 
-    return (
-        <div className="space-y-4 p-2">
-            {files.map((file) => (
-                <div
+  if (!folders.length)
+    return <div className="p-4 text-gray-500">Нет папок</div>;
+
+  return (
+    <div className="space-y-2 p-2">
+      {folders.map((folder) => (
+        <div key={folder.id} className="border rounded-md overflow-hidden">
+          <div
+            onClick={() =>
+              setSelectedFolderId(
+                selectedFolderId === folder.id ? null : folder.id,
+              )
+            }
+            className={`cursor-pointer p-3 transition flex justify-between items-center
+                            ${selectedFolderId === folder.id ? "bg-blue-50 border-l-4 border-blue-500" : "hover:bg-gray-50"}
+                        `}
+          >
+            <div className="flex items-center">
+              <span className="mr-2">📁</span>
+              <span className="font-medium">{folder.name}</span>
+            </div>
+            <span className="text-gray-400">
+              {selectedFolderId === folder.id ? "▼" : "▶"}
+            </span>
+          </div>
+
+          {selectedFolderId === folder.id && (
+            <div className="bg-gray-50 p-2">
+              {filesInFolder.length === 0 ? (
+                <div className="text-gray-400 text-sm p-2">
+                  Нет файлов в этой папке
+                </div>
+              ) : (
+                filesInFolder.map((file) => (
+                  <div
                     key={file.id}
                     onClick={() => setSelectedFileUrl(file.path)}
-                    className={`cursor-pointer rounded-md border p-3 transition
-                        ${
-                        selectedFileUrl === file.path
-                            ? 'border-blue-500 bg-blue-100'
-                            : 'border-gray-300 hover:bg-gray-100'
-                    }
-                    `}
-                    title={`${file.name} — папка: ${file.folder.name}`}
-                >
-                    <div className="text-sm text-gray-500 font-medium mb-1">📁 {file.folder.name}</div>
-                    <div className="font-semibold text-gray-900 truncate">{file.name}</div>
-                </div>
-            ))}
-
+                    className="cursor-pointer p-2 text-sm rounded hover:bg-gray-100 flex items-center"
+                  >
+                    <span className="mr-2">📄</span>
+                    <span className="truncate">{file.name}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
-    );
+      ))}
+    </div>
+  );
 };

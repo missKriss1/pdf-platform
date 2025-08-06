@@ -31,8 +31,8 @@ export class FoldersService {
 
   async findAllWithFiles(): Promise<Folder[]> {
     return this.foldersRepository.find({
-      relations: ['files'], // загрузить вложенные файлы для каждой папки
-      order: { createdAt: 'DESC', files: { uploadedAt: 'DESC' } }, // если нужна сортировка
+      relations: ['files'],
+      order: { createdAt: 'DESC', files: { uploadedAt: 'DESC' } },
     });
   }
 

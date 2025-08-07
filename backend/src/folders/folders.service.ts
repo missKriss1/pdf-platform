@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Folder } from '../entities/folder';
-import { File } from '../entities/file';
+import { Folder } from '../entities/folder.entity';
+import { File } from '../entities/file.entity';
 import { Repository } from 'typeorm';
 import { FolderDto } from '../dto/folder.dto';
 

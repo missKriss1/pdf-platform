@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Folder } from './../entities/folder';
-import { File } from './../entities/file';
+import { Folder } from './../entities/folder.entity';
+import { File } from './../entities/file.entity';
 import { FoldersService } from './folders.service';
 import { FoldersController } from './folders.controller';
 

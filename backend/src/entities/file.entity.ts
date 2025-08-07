@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Folder } from './../entities/folder';
+import { Folder } from './../entities/folder.entity';
 
 @Entity('files')
 export class File {

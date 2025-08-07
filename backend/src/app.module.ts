@@ -16,6 +16,8 @@ import { join } from 'path';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: false,
+      migrations: ['dist/migrations/*.js'],
+      migrationsRun: true,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),

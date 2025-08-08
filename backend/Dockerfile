@@ -1,4 +1,3 @@
-# Этап 1 — Сборка TypeScript
 FROM node:22-alpine AS builder
 
 WORKDIR /app
@@ -10,7 +9,6 @@ COPY . .
 
 RUN npm run build
 
-# Этап 2 — Финальный образ для продакшена
 FROM node:22-alpine
 
 WORKDIR /app

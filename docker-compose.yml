@@ -1,34 +1,44 @@
-name: pdf-reporting-platform
-services:
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_DB: pdfplatform
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      timeout: 3s
-      interval: 5s
-      retries: 5
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+version: '3.9'
 
+services:
   frontend:
     build:
-      context: /Users/mac/pdf-reporting-platform/frontend
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "3000:80"
     restart: unless-stopped
-    networks:
-      - default
 
-networks:
-  default:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/pdfplatform
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pdfplatform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres_data:
